@@ -46,7 +46,9 @@ jobs:
           } 2>&1 | tee build.log
 
       - name: Offline cache list
-        run: python3 tool/web/make_sw.py build/web | tee -a build.log
+        run: |
+          set -o pipefail
+          python3 .github/scripts/make_sw.py build/web | tee -a build.log
 
       # Lets the build log be read without Actions access: it is pushed to the
       # ci-log branch on every run.

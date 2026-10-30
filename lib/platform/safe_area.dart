@@ -33,7 +33,13 @@ class _WebSafeArea extends StatelessWidget {
             view.right,
             math.max(0.0, view.bottom - data.viewInsets.bottom),
           );
-          return MediaQuery(data: data.copyWith(viewPadding: view, padding: pad), child: child);
+          // An iPhone with a home indicator is navigated by gestures, not
+          // buttons; say so, so the app doesn't paint an Android button-bar scrim.
+          final gestures = s[2] > 0 ? EdgeInsets.fromLTRB(16, 0, 16, s[2]) : data.systemGestureInsets;
+          return MediaQuery(
+            data: data.copyWith(viewPadding: view, padding: pad, systemGestureInsets: gestures),
+            child: child,
+          );
         }),
       );
 }

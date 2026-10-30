@@ -168,7 +168,8 @@ void main() {
     tHit += max(dist, 0.0015);
     if (tHit > 5.2) break;
   }
-  float px = fwidth(uv.x) * 1.35;
+  // fwidth(uv.x), written out: CanvasKit (web) has no fwidth.
+  float px = 2.0 / min(uSize.x, uSize.y) * 1.35;
   float cover = hit > 0.5 ? 1.0 : 1.0 - smoothstep(0.0, px, near);
   if (cover < 0.004) {
     fragColor = vec4(0.0);

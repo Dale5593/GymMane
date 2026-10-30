@@ -1,5 +1,5 @@
 // GymMane offline service worker. The build fills in VERSION, CORE and ALL
-// (see tool/web/make_sw.py). Everything is served cache-first so the app
+// (see .github/scripts/make_sw.py). Everything is served cache-first so the app
 // works with no signal at the gym; a new deploy ships a new VERSION.
 const VERSION = '__VERSION__';
 const CORE = __CORE__;
