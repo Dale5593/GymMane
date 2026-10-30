@@ -61,6 +61,16 @@ jobs:
           git -c user.name=ci -c user.email=ci@localhost commit -qm "Build log for $GITHUB_SHA"
           git push -fq "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-log
 
+      # A copy of the built site on the web-build branch, for testing.
+      - name: Publish build output
+        if: success()
+        run: |
+          cd build/web
+          git init -q && git checkout -q -b web-build && git add .
+          git -c user.name=ci -c user.email=ci@localhost commit -qm "Web build of $GITHUB_SHA"
+          git push -fq "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" web-build
+          rm -rf .git
+
       - name: Upload site
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
