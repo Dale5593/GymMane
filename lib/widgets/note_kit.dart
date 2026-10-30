@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -7,6 +5,7 @@ import 'package:video_player/video_player.dart';
 
 import '../l10n/l10n.dart';
 import '../models/note.dart';
+import '../platform/file_media.dart';
 import '../services/media_store.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -689,7 +688,7 @@ class _MediaViewerState extends State<_MediaViewer> {
               if (MediaStore.isVideo(name)) {
                 return _FullVideo(key: ValueKey(path), path: path);
               }
-              final image = Image.file(File(path), fit: BoxFit.contain);
+              final image = Image(image: fileImageProvider(path), fit: BoxFit.contain);
               return InteractiveViewer(
                 maxScale: 5,
                 child: Center(
@@ -755,7 +754,7 @@ class _FullVideoState extends State<_FullVideo> {
 
   Future<void> _load() async {
     try {
-      final c = VideoPlayerController.file(File(widget.path));
+      final c = fileVideoController(widget.path);
       await c.initialize();
       await c.setLooping(true);
       await c.play();

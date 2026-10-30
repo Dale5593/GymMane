@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import '../platform/web_bridge.dart';
+
 class ScreenAwake {
   ScreenAwake._();
 
@@ -20,7 +22,12 @@ class ScreenAwake {
   }
 
   static Future<void> keepOn(bool on) async {
-    if (kIsWeb || _last == on) return;
+    if (_last == on) return;
+    if (kIsWeb) {
+      _last = on;
+      webKeepAwake(on);
+      return;
+    }
     _last = on;
     try {
       await _channel.invokeMethod<void>('keepOn', {'on': on});

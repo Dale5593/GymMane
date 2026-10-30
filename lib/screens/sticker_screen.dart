@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -6,12 +5,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../l10n/l10n.dart';
 import '../models/workout.dart';
+import '../platform/file_media.dart';
+import '../platform/io.dart';
+import '../platform/paths.dart';
+import '../platform/picked.dart';
+import '../platform/share_file.dart';
 import '../services/gallery.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -76,7 +78,9 @@ class _StickerEditorState extends State<StickerEditor> {
       final shot = await ImagePicker()
           .pickImage(source: source, maxWidth: 2160, maxHeight: 3840, imageQuality: 92);
       if (shot == null || !mounted) return;
-      setState(() => _photo = File(shot.path));
+      final path = await pickedImagePath(shot);
+      if (!mounted) return;
+      setState(() => _photo = File(path));
     } catch (_) {}
   }
 
@@ -110,7 +114,7 @@ class _StickerEditorState extends State<StickerEditor> {
         final dir = await getTemporaryDirectory();
         final file = File('${dir.path}/gymmane-sticker.png');
         await file.writeAsBytes(png, flush: true);
-        await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: 'GymMane'));
+        await shareFile(file.path, subject: 'GymMane');
       });
 
   Future<void> _save() => _run((png) async {
@@ -197,7 +201,7 @@ class _StickerEditorState extends State<StickerEditor> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                if (_photo != null) Image.file(_photo!, fit: BoxFit.cover),
+                if (_photo != null) Image(image: fileImageProvider(_photo!.path), fit: BoxFit.cover),
                 Positioned(
                   left: _pos.dx * size.width,
                   top: _pos.dy * size.height,

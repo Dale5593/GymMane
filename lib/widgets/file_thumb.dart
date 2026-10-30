@@ -1,7 +1,8 @@
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
+
+import '../platform/file_media.dart';
 
 class FileThumb extends StatelessWidget {
   const FileThumb(
@@ -33,7 +34,7 @@ class FileThumb extends StatelessWidget {
         final h = height != null && height!.isFinite ? height! : (box.maxHeight.isFinite ? box.maxHeight : screen.height);
         final side = _side(context, w, h);
         return Image(
-          image: ResizeImage(FileImage(File(path)), width: side, height: side, policy: ResizeImagePolicy.fit),
+          image: ResizeImage(fileImageProvider(path), width: side, height: side, policy: ResizeImagePolicy.fit),
           fit: fit,
           alignment: alignment,
           width: width,

@@ -18,11 +18,12 @@ Future<void> shareMealPlans(List<MealPlan> plans) async {
     final slug = name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'^-+|-+$'), '');
     final file = File('${dir.path}/gymmane-${slug.isEmpty ? 'plan' : slug}.json');
     await file.writeAsString(fit.exportMealPlansJson(plans));
-    await SharePlus.instance.share(ShareParams(
-      files: [XFile(file.path, mimeType: 'application/json')],
+    await shareFile(
+      file.path,
+      mimeType: 'application/json',
       text: [for (final p in plans) _planSummary(p)].join('\n\n'),
       subject: name,
-    ));
+    );
   } catch (_) {}
 }
 

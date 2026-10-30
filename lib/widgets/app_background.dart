@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+import '../platform/file_media.dart';
 import '../theme/app_colors.dart';
 
 class AppBackground extends StatelessWidget {
@@ -25,10 +25,9 @@ class AppBackground extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.file(
-                File(path),
+              Image(
+                image: ResizeImage.resizeIfNeeded(cacheWidth, null, fileImageProvider(path)),
                 fit: BoxFit.cover,
-                cacheWidth: cacheWidth,
                 filterQuality: FilterQuality.medium,
                 errorBuilder: (_, _, _) => const SizedBox.shrink(),
               ),

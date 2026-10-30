@@ -1628,7 +1628,7 @@ mixin _StickerDrafts<T extends StatefulWidget> on State<T> {
     if (source == null) return;
     final shot = await ImagePicker().pickImage(source: source, maxWidth: 1400, maxHeight: 1400, imageQuality: 92);
     if (shot == null || !mounted) return;
-    final bytes = await File(shot.path).readAsBytes();
+    final bytes = await shot.readAsBytes();
     if (!mounted) return;
     setState(() => _working = true);
     final draftFuture = prepareCutout(bytes);

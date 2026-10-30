@@ -5,6 +5,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../l10n/l10n.dart';
 import '../models/exercise.dart';
 import '../models/note.dart';
+import '../platform/picked.dart';
 import '../services/exercise_match.dart';
 import '../services/media_store.dart';
 import '../state/fit_state.dart';
@@ -75,7 +76,7 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
     try {
       final res = await FilePicker.platform.pickFiles(type: FileType.media, allowMultiple: true);
       for (final f in res?.files ?? const <PlatformFile>[]) {
-        final path = f.path;
+        final path = await pickedFilePath(f);
         if (path == null) continue;
         final saved = await fit.importNoteMedia(path);
         if (saved == null) continue;

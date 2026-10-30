@@ -1,16 +1,16 @@
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/l10n.dart';
 import '../models/nutrition.dart';
+import '../platform/io.dart';
+import '../platform/paths.dart';
+import '../platform/share_file.dart';
 import '../services/food_library.dart';
 import '../services/media_store.dart';
 import '../services/sticker_cutout.dart';
@@ -18,6 +18,7 @@ import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/charts.dart';
+import '../widgets/cutout_editor.dart';
 import '../widgets/dialogs.dart';
 import '../widgets/glass.dart';
 import '../widgets/home_folder.dart';
@@ -25,7 +26,6 @@ import '../widgets/liquid_notch.dart';
 import '../widgets/nutrition_art.dart';
 import '../widgets/photo_source_sheet.dart';
 import '../widgets/rolling_text.dart';
-import '../widgets/cutout_editor.dart';
 import '../widgets/ruler_picker.dart';
 import '../widgets/ui_kit.dart';
 import 'plan_import_sheet.dart' show pickTextFile;

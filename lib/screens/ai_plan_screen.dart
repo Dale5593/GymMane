@@ -1,12 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../l10n/l10n.dart';
+import '../platform/io.dart';
+import '../platform/paths.dart';
+import '../platform/share_file.dart';
 import '../services/plan_share.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -227,9 +226,7 @@ class _AiPlanScreenState extends State<AiPlanScreen> {
       final file = File('${dir.path}/gymmane-exercises.txt');
       await file.writeAsString(fit.planRequestText());
       if (!mounted) return;
-      await SharePlus.instance.share(
-        ShareParams(files: [XFile(file.path)], subject: 'GymMane exercises'),
-      );
+      await shareFile(file.path, subject: 'GymMane exercises');
     } catch (_) {}
   }
 

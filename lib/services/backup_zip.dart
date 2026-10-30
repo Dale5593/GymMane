@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 
 import '../models/exercise.dart';
-import '../models/nutrition.dart';
 import '../models/note.dart';
+import '../models/nutrition.dart';
 import '../models/progress_shot.dart';
+import '../platform/io.dart';
 import '../state/fit_state.dart';
 import 'alarm_store.dart';
 import 'local_store.dart';

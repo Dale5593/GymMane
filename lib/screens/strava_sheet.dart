@@ -1,12 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../l10n/l10n.dart';
 import '../models/workout.dart';
+import '../platform/io.dart';
+import '../platform/paths.dart';
+import '../platform/share_file.dart';
 import '../services/fit_export.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -228,6 +227,6 @@ Future<void> shareWorkoutFit(LoggedSession s) async {
     final stamp = '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
     final file = File('${dir.path}/GymMane $stamp.fit');
     await file.writeAsBytes(workoutFit(s, pounds: fit.isLb));
-    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], text: t.exportForStravaHint));
+    await shareFile(file.path, text: t.exportForStravaHint);
   } catch (_) {}
 }

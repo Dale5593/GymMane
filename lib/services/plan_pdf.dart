@@ -1,18 +1,18 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:isolate';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../l10n/l10n.dart';
 import '../models/exercise.dart';
 import '../models/workout.dart';
+import '../platform/io.dart';
+import '../platform/paths.dart';
+import '../platform/share_file.dart';
 import '../state/fit_state.dart';
 import '../widgets/exercise_art.dart';
 import '../widgets/routine_folder.dart';
@@ -45,10 +45,7 @@ Future<void> sharePlanPdf(List<Routine> routines, {bool week = false}) async {
     final file = File('${dir.path}/gymmane-${name.isEmpty ? 'plan' : name}.pdf');
     await file.writeAsBytes(bytes);
     final title = week ? sentenceCase(t.weeklyPlan) : fit.routineTitle(routines.first);
-    await SharePlus.instance.share(ShareParams(
-      files: [XFile(file.path, mimeType: 'application/pdf')],
-      subject: title,
-    ));
+    await shareFile(file.path, mimeType: 'application/pdf', subject: title);
   } catch (_) {}
 }
 
@@ -82,7 +79,7 @@ Future<Uint8List> buildPlanPdf(List<Routine> routines, {bool week = false, DateT
     image.dispose();
     if (raw == null) continue;
     final rgba = raw.buffer.asUint8List();
-    pages.add((w, h, await Isolate.run(() => _deflateRgb(rgba))));
+    pages.add((w, h, await compute(_deflateRgb, rgba)));
   }
   doc.dispose();
   runner.dispose();

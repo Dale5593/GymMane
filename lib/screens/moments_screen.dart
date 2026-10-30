@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -7,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../l10n/l10n.dart';
+import '../platform/file_media.dart';
+import '../platform/picked.dart';
 import '../services/media_store.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -37,14 +38,14 @@ class _MomentsScreenState extends State<MomentsScreen> {
         final shots = await ImagePicker()
             .pickMultiImage(maxWidth: 1440, maxHeight: 1920, imageQuality: 88);
         for (final shot in shots) {
-          await fit.addMoment(shot.path);
+          await fit.addMoment(await pickedImagePath(shot));
         }
         return;
       }
       final shot = await ImagePicker()
           .pickImage(source: source, maxWidth: 1440, maxHeight: 1920, imageQuality: 88);
       if (shot == null) return;
-      await fit.addMoment(shot.path);
+      await fit.addMoment(await pickedImagePath(shot));
     } catch (_) {
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -345,7 +346,7 @@ class _PhotoView extends StatelessWidget {
                       tag: moment.file,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(22),
-                        child: Image.file(File(path), fit: BoxFit.contain),
+                        child: Image(image: fileImageProvider(path), fit: BoxFit.contain),
                       ),
                     ),
                   ),

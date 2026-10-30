@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui show Image, Picture, PictureRecorder;
 
@@ -7,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../models/nutrition.dart';
+import '../platform/file_media.dart';
+import '../platform/io.dart';
 import '../services/food_library.dart';
 import '../services/media_store.dart';
 import '../theme/app_colors.dart';
@@ -205,12 +206,12 @@ class FoodSticker extends StatelessWidget {
               cacheWidth: cache,
               opacity: dim ? _faded : null,
               errorBuilder: (_, _, _) => _Placeholder(name: name, size: size, gc: gc))
-          : Image.file(file!,
+          : Image(
+              image: ResizeImage.resizeIfNeeded(cache, null, fileImageProvider(file!.path)),
               width: size,
               height: size,
               fit: BoxFit.contain,
               gaplessPlayback: true,
-              cacheWidth: cache,
               opacity: dim ? _faded : null,
               errorBuilder: (_, _, _) => _Placeholder(name: name, size: size, gc: gc));
       art = !shadow

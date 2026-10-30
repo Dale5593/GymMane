@@ -1,15 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../l10n/l10n.dart';
 import '../models/workout.dart';
+import '../platform/io.dart';
+import '../platform/paths.dart';
+import '../platform/share_file.dart';
 import '../services/plan_share.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -31,11 +32,12 @@ Future<void> sharePlan(List<Routine> routines, {String? title}) async {
         .replaceAll(RegExp(r'^-+|-+$'), '');
     final file = File('${dir.path}/gymmane-${slug.isEmpty ? 'plan' : slug}.json');
     await file.writeAsString(fit.exportPlanJson(routines));
-    await SharePlus.instance.share(ShareParams(
-      files: [XFile(file.path, mimeType: 'application/json')],
+    await shareFile(
+      file.path,
+      mimeType: 'application/json',
       text: '${fit.planSummaryText(routines)}\n\n${t.shareMessage(name)}',
       subject: name,
-    ));
+    );
   } catch (_) {}
 }
 
@@ -44,7 +46,7 @@ Future<String?> pickTextFile() async {
     final result = await FilePicker.platform.pickFiles(withData: true);
     if (result == null) return null;
     final picked = result.files.single;
-    final bytes = picked.bytes ?? (picked.path == null ? null : await File(picked.path!).readAsBytes());
+    final bytes = picked.bytes ?? (kIsWeb || picked.path == null ? null : await File(picked.path!).readAsBytes());
     return bytes == null ? null : utf8.decode(bytes, allowMalformed: true);
   } catch (_) {
     return null;

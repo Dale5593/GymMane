@@ -1,16 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'app/gymmane_app.dart';
+import 'platform/safe_area.dart';
+import 'platform/web_bridge.dart';
 import 'services/alarm_store.dart';
 import 'services/auto_backup.dart';
 import 'services/device_kind.dart';
 import 'services/home_widget_bridge.dart';
-import 'services/nutrition_widgets.dart';
 import 'services/live_workout.dart';
 import 'services/local_store.dart';
 import 'services/media_store.dart';
+import 'services/nutrition_widgets.dart';
 import 'services/rest_alarm.dart';
 import 'services/screen_awake.dart';
 import 'state/fit_state.dart';
@@ -18,14 +21,17 @@ import 'wear/wear_app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    systemNavigationBarColor: Colors.transparent,
-    systemNavigationBarDividerColor: Colors.transparent,
-    systemNavigationBarContrastEnforced: false,
-    systemStatusBarContrastEnforced: false,
-  ));
+  if (!kIsWeb) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+      systemStatusBarContrastEnforced: false,
+    ));
+  }
+  await initWebPlatform();
 
   await initializeDateFormatting();
   await Store.instance.init();
@@ -49,7 +55,7 @@ Future<void> main() async {
   fit.onWidgetsShouldUpdate = HomeWidgetBridge.update;
   NutritionWidgets.watch(HomeWidgetBridge.update);
   AutoBackup.instance.init();
-  runApp(const GymManeApp());
+  runApp(withWebSafeArea(const GymManeApp()));
 
   WidgetsBinding.instance.addPostFrameCallback((_) => HomeWidgetBridge.update());
 }

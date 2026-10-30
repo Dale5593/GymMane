@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +7,9 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../l10n/l10n.dart';
+import '../platform/io.dart' as io;
+import '../platform/io.dart' show Platform;
+import '../platform/web_bridge.dart';
 
 class RestAlarm {
   RestAlarm._();
@@ -105,6 +106,8 @@ class RestAlarm {
 
   Future<void> init() async {
     if (_ready) return;
+    // The web app has no scheduled notifications; sounds go through Web Audio.
+    if (kIsWeb) return;
 
     try {
       tzdata.initializeTimeZones();
@@ -211,7 +214,27 @@ class RestAlarm {
     await requestPermission();
   }
 
+  Future<void> _playWeb() async {
+    final p = customSoundPath;
+    if (p != null && p.isNotEmpty) {
+      try {
+        await webPlaySound('alarm:$p', io.File(p).readAsBytesSync());
+        return;
+      } catch (_) {}
+    }
+    try {
+      _defaultWav ??= (await rootBundle.load('assets/audio/rest_over.wav')).buffer.asUint8List();
+      await webPlaySound('alarm:default', _defaultWav);
+    } catch (_) {}
+  }
+
+  Uint8List? _defaultWav;
+
   Future<void> fireNow() async {
+    if (kIsWeb) {
+      if (style != 'vibrate') await _playWeb();
+      return;
+    }
     final visible = WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
     final custom = customSoundPath?.isNotEmpty ?? false;
     if (_ready && !visible && !custom && Platform.isAndroid) {
@@ -252,6 +275,10 @@ class RestAlarm {
   }
 
   Future<void> preview() async {
+    if (kIsWeb) {
+      await _playWeb();
+      return;
+    }
     final player = _player;
     if (player == null) return;
     try {
@@ -264,6 +291,14 @@ class RestAlarm {
   }
 
   Future<Duration?> probeDuration(String path) async {
+    if (kIsWeb) {
+      try {
+        final secs = await webAudioDuration(await io.File(path).readAsBytes());
+        return secs == null ? null : Duration(milliseconds: (secs * 1000).round());
+      } catch (_) {
+        return null;
+      }
+    }
     AudioPlayer? probe;
     try {
       probe = AudioPlayer();

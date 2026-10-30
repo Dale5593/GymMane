@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:home_widget/home_widget.dart';
 
+import '../platform/io.dart' show Platform;
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
 import '../widgets/home_widget_views.dart';

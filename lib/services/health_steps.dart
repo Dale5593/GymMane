@@ -1,7 +1,8 @@
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/services.dart';
+
+import '../platform/io.dart';
 
 enum HealthAccess { unsupported, denied, granted }
 

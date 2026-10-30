@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
@@ -7,6 +6,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:video_player/video_player.dart';
 
 import '../models/exercise.dart';
+import '../platform/file_media.dart';
 import '../services/media_store.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -158,7 +158,7 @@ class _VideoTileState extends State<_VideoTile> {
 
   Future<void> _load() async {
     try {
-      final c = VideoPlayerController.file(File(widget.path), videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
+      final c = fileVideoController(widget.path, videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
       await c.initialize();
       await c.setVolume(0);
       if (widget.still) {

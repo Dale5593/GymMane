@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../l10n/l10n.dart';
 import '../models/profile.dart';
 import '../models/workout.dart';
+import '../platform/picked.dart';
 import '../services/media_store.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final shot = await ImagePicker()
           .pickImage(source: source, maxWidth: 1600, maxHeight: 900, imageQuality: 82);
       if (shot == null) return;
-      fit.setProfileBanner(await File(shot.path).readAsBytes());
+      fit.setProfileBanner(await shot.readAsBytes());
     } catch (_) {
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -66,14 +66,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final shots = await ImagePicker()
             .pickMultiImage(maxWidth: 1440, maxHeight: 1920, imageQuality: 88);
         for (final shot in shots) {
-          await fit.addMoment(shot.path);
+          await fit.addMoment(await pickedImagePath(shot));
         }
         return;
       }
       final shot = await ImagePicker()
           .pickImage(source: source, maxWidth: 1440, maxHeight: 1920, imageQuality: 88);
       if (shot == null) return;
-      await fit.addMoment(shot.path);
+      await fit.addMoment(await pickedImagePath(shot));
     } catch (_) {
     } finally {
       if (mounted) setState(() => _busy = false);

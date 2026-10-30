@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import '../l10n/l10n.dart';
 import '../models/progress_shot.dart';
+import '../platform/file_media.dart';
 import '../services/media_store.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -233,7 +232,7 @@ class ShareCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: path == null
           ? const SizedBox.expand()
-          : Image.file(File(path), fit: BoxFit.cover, gaplessPlayback: true,
+          : Image(image: fileImageProvider(path), fit: BoxFit.cover, gaplessPlayback: true,
               errorBuilder: (_, _, _) => const SizedBox.expand()),
     );
   }

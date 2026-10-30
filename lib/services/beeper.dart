@@ -1,11 +1,13 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+
+import '../platform/io.dart';
+import '../platform/paths.dart';
+import '../platform/web_bridge.dart';
 
 class Beeper {
   Beeper._();
@@ -69,7 +71,14 @@ class Beeper {
     try {
       kind == _TickKind.go ? HapticFeedback.heavyImpact() : HapticFeedback.selectionClick();
     } catch (_) {}
-    if (!sound || !await _ready()) return;
+    if (!sound) return;
+    if (kIsWeb) {
+      final go = kind == _TickKind.go;
+      await webPlaySound(go ? 'gm_go' : 'gm_tick',
+          go ? (_webGo ??= _tone(1318.5, 0.32)) : (_webTick ??= _tone(880, 0.09)));
+      return;
+    }
+    if (!await _ready()) return;
     final path = kind == _TickKind.go ? _go : _tick;
     if (path == null) return;
     _release?.cancel();
@@ -96,11 +105,19 @@ class Beeper {
 
   bool chimeOn = true;
 
+  Uint8List? _webTick;
+  Uint8List? _webGo;
+  Uint8List? _webChime;
+
   Future<void> chime() async {
-    if (kIsWeb || _failed || !chimeOn) return;
+    if (_failed || !chimeOn) return;
     final now = DateTime.now();
     if (now.difference(_lastChime) < const Duration(milliseconds: 700)) return;
     _lastChime = now;
+    if (kIsWeb) {
+      await webPlaySound('gm_chime', _webChime ??= chimeWav(), volume: 0.55);
+      return;
+    }
     try {
       if (_soft == null) {
         final dir = await getTemporaryDirectory();

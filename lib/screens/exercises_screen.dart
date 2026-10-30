@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:file_picker/file_picker.dart';
@@ -9,6 +8,8 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import '../catalog/exercise_catalog.dart';
 import '../l10n/l10n.dart';
 import '../models/exercise.dart';
+import '../platform/file_media.dart';
+import '../platform/picked.dart';
 import '../services/media_store.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -429,7 +430,8 @@ void showCreateExerciseSheet(BuildContext context,
           Future<void> pickMedia() async {
             try {
               final res = await FilePicker.platform.pickFiles(type: FileType.media);
-              final path = res?.files.single.path;
+              final picked = res?.files.single;
+              final path = picked == null ? null : await pickedFilePath(picked);
               if (path != null) setSheet(() => mediaPath = path);
             } catch (_) {}
           }
@@ -705,7 +707,7 @@ void showCreateExerciseSheet(BuildContext context,
                                           style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textSecondary)),
                                     ]),
                                   )
-                                : Center(child: Image.file(File(mediaPath!), fit: BoxFit.contain, alignment: Alignment.center)),
+                                : Center(child: Image(image: fileImageProvider(mediaPath!), fit: BoxFit.contain, alignment: Alignment.center)),
                           ),
                           Positioned(
                             top: 8,

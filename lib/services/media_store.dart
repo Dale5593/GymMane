@@ -1,7 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
+
+import '../platform/io.dart';
+import '../platform/paths.dart';
 
 class MediaStore {
   MediaStore._();

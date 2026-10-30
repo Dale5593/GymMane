@@ -1,18 +1,20 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/l10n.dart';
 import '../models/profile.dart';
+import '../platform/io.dart';
+import '../platform/paths.dart';
+import '../platform/picked.dart';
+import '../platform/share_file.dart';
 import '../services/alarm_store.dart';
 import '../services/auto_backup.dart';
 import '../services/backup_zip.dart';
@@ -34,11 +36,11 @@ import '../widgets/liquid_notch.dart';
 import '../widgets/photo_source_sheet.dart';
 import '../widgets/profile_avatar.dart';
 import '../widgets/ruler_picker.dart';
+import '../widgets/steps_card.dart';
 import '../widgets/timer_panel.dart';
+import '../widgets/ui_kit.dart';
 import 'profile_screen.dart';
 import 'strava_sheet.dart';
-import '../widgets/steps_card.dart';
-import '../widgets/ui_kit.dart';
 
 const _kRepoUrl = 'https://github.com/InlitX/GymMane';
 const _kBugUrl = '$_kRepoUrl/issues/new?labels=bug';
@@ -671,9 +673,7 @@ class SettingsScreen extends StatelessWidget {
     final file = File('${dir.path}/gymmane-workouts-$stamp.csv');
     await file.writeAsString(fit.exportCsv());
     if (!context.mounted) return;
-    await SharePlus.instance.share(
-      ShareParams(files: [XFile(file.path)], subject: 'GymMane workouts'),
-    );
+    await shareFile(file.path, subject: 'GymMane workouts');
   }
 
   Future<void> _resetAll(BuildContext context) async {
@@ -694,9 +694,7 @@ class SettingsScreen extends StatelessWidget {
     final file = File('${dir.path}/gymmane-backup-$stamp.zip');
     await file.writeAsBytes(await buildBackupZip(), flush: true);
     if (!context.mounted) return;
-    await SharePlus.instance.share(
-      ShareParams(files: [XFile(file.path)], subject: 'GymMane backup'),
-    );
+    await shareFile(file.path, subject: 'GymMane backup');
   }
 
   Future<void> _importBackup(BuildContext context) async {
@@ -717,7 +715,7 @@ class SettingsScreen extends StatelessWidget {
       );
       if (result == null) return;
       final picked = result.files.single;
-      bytes = picked.bytes ?? (picked.path == null ? null : await File(picked.path!).readAsBytes());
+      bytes = picked.bytes ?? (kIsWeb || picked.path == null ? null : await File(picked.path!).readAsBytes());
     } catch (_) {
       bytes = null;
     }
@@ -876,7 +874,7 @@ class SettingsScreen extends StatelessWidget {
       final result = await FilePicker.platform.pickFiles(withData: true);
       if (result == null) return;
       final picked = result.files.single;
-      bytes = picked.bytes ?? (picked.path == null ? null : await File(picked.path!).readAsBytes());
+      bytes = picked.bytes ?? (kIsWeb || picked.path == null ? null : await File(picked.path!).readAsBytes());
     } catch (_) {
       bytes = null;
     }
@@ -1267,7 +1265,8 @@ class SettingsScreen extends StatelessWidget {
   Future<void> _pickBackground() async {
     try {
       final result = await FilePicker.platform.pickFiles(type: FileType.image);
-      final path = result?.files.single.path;
+      final picked = result?.files.single;
+      final path = picked == null ? null : await pickedFilePath(picked);
       if (path != null) await fit.setBgPhoto(path);
     } catch (_) {}
   }
@@ -1312,7 +1311,7 @@ class SettingsScreen extends StatelessWidget {
       );
       if (result == null) return;
       final picked = result.files.single;
-      path = picked.path;
+      path = await pickedFilePath(picked);
       name = picked.name;
     } catch (_) {
       path = null;

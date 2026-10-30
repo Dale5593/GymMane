@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -7,6 +5,7 @@ import 'package:video_player/video_player.dart';
 
 import '../l10n/l10n.dart';
 import '../models/exercise.dart';
+import '../platform/file_media.dart';
 import '../services/media_store.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -53,7 +52,7 @@ class _ExercisePreviewState extends State<_ExercisePreview> {
   }
 
   Future<void> _load(String path) async {
-    final c = VideoPlayerController.file(File(path), videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
+    final c = fileVideoController(path, videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
     setState(() => _video = c);
     try {
       await c.initialize();

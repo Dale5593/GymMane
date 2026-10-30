@@ -6,6 +6,7 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../l10n/l10n.dart';
 import '../models/progress_shot.dart';
+import '../platform/picked.dart';
 import '../services/media_store.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -43,7 +44,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
         imageQuality: 88,
       );
       if (shot == null) return;
-      await fit.attachShot(day, pose, shot.path);
+      await fit.attachShot(day, pose, await pickedImagePath(shot));
     } catch (_) {
     } finally {
       if (mounted) setState(() => _busy = false);

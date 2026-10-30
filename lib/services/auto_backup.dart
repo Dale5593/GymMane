@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 
+import '../platform/io.dart';
+import '../platform/paths.dart';
 import '../state/fit_state.dart';
 import 'backup_zip.dart';
 import 'local_store.dart';

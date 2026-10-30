@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="GymMane — an offline, ad-free gym log. Based on GymMane by InlitX.">
+  <title>GymMane</title>
+
+  <!-- iPhone home-screen app -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GymMane">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1320x2868.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1290x2796.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1260x2736.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1284x2778.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1242x2688.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/splash-828x1792.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1206x2622.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1179x2556.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1170x2532.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1125x2436.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/splash-1242x2208.jpg">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/splash-750x1334.jpg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%; overflow: hidden;
+      background: #0A0A0A; color: #fff;
+      overscroll-behavior: none; -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    }
+    #gm-splash {
+      position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at 0% 100%, #3a2a22 0, rgba(12,11,10,0) 62vmin), #0C0B0A;
+      transition: opacity .35s ease;
+    }
+    #gm-splash img { width: 36vw; max-width: 220px; margin-top: -6vh; }
+    #gm-splash.gone { opacity: 0; pointer-events: none; }
+    #gm-install {
+      position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 20;
+      display: none; gap: 12px; align-items: center;
+      padding: 14px 16px; border-radius: 18px; background: rgba(28,28,28,.96);
+      border: 1px solid #3E3E3E; box-shadow: 0 10px 30px rgba(0,0,0,.5); font-size: 15px; line-height: 1.35;
+    }
+    #gm-install.show { display: flex; }
+    #gm-install img { width: 40px; height: 40px; border-radius: 10px; flex: none; }
+    #gm-install b { color: #D9A184; }
+    #gm-install button { flex: none; background: none; border: 0; color: #9A9A9A; font-size: 22px; padding: 4px 6px; }
+    .gm-share { position: fixed; inset: 0; z-index: 30; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
+    .gm-share-card {
+      width: 100%; max-width: 480px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px;
+      padding: 20px 16px calc(16px + env(safe-area-inset-bottom)); background: #1C1C1C; border-radius: 22px 22px 0 0;
+    }
+    .gm-share-name { color: #9A9A9A; font-size: 14px; text-align: center; word-break: break-all; margin-bottom: 4px; }
+    .gm-share-card button { font: inherit; font-size: 17px; font-weight: 600; padding: 15px; border-radius: 14px; border: 0; }
+    .gm-share-go { background: #D9A184; color: #0A0A0A; }
+    .gm-share-save { background: #2B2B2B; color: #fff; }
+    .gm-share-cancel { background: none; color: #9A9A9A; }
+  </style>
+</head>
+<body>
+  <div id="gm-splash"><img src="icons/figure.png" alt=""></div>
+  <div id="gm-install" role="dialog" aria-label="Install GymMane">
+    <img src="icons/Icon-192.png" alt="">
+    <div>Install GymMane: tap <b>Share</b> <svg width="14" height="18" viewBox="0 0 14 18" fill="none" stroke="#D9A184" stroke-width="1.6" style="vertical-align:-3px"><path d="M7 11V1M3.5 4.5 7 1l3.5 3.5M4 7H1.5v10h11V7H10"/></svg> then <b>Add to Home Screen</b>.</div>
+    <button type="button" aria-label="Dismiss">×</button>
+  </div>
+
+  <script src="gm_bridge.js"></script>
+  <script>
+    (function () {
+      // Flutter swaps in its own viewport tag; keep "viewport-fit=cover" so the
+      // app can draw under the notch and the safe-area insets are reported.
+      function fixViewport() {
+        document.querySelectorAll('meta[name="viewport"]').forEach(function (m) {
+          if (m.content.indexOf('viewport-fit') < 0) m.content += ', viewport-fit=cover';
+        });
+      }
+      new MutationObserver(fixViewport).observe(document.head, { childList: true });
+
+      // Hide the launch screen once Flutter has drawn.
+      window.addEventListener('flutter-first-frame', function () {
+        var s = document.getElementById('gm-splash');
+        s.classList.add('gone');
+        setTimeout(function () { s.remove(); }, 400);
+      });
+
+      // Install hint for iPhone/iPad Safari (not already on the Home Screen).
+      var ua = navigator.userAgent;
+      var ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      var standalone = navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+      var dismissed = false;
+      try { dismissed = localStorage.getItem('gm_install_hint') === '1'; } catch (e) {}
+      if (ios && !standalone && !dismissed) {
+        var hint = document.getElementById('gm-install');
+        hint.classList.add('show');
+        hint.querySelector('button').onclick = function () {
+          hint.remove();
+          try { localStorage.setItem('gm_install_hint', '1'); } catch (e) {}
+        };
+      }
+
+      // Offline support.
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('sw.js').then(function (reg) {
+            var warm = function () { if (reg.active) reg.active.postMessage('warm'); };
+            if (reg.active) setTimeout(warm, 4000);
+            navigator.serviceWorker.addEventListener('controllerchange', function () { setTimeout(warm, 4000); });
+          }).catch(function (e) { console.warn('Service worker failed', e); });
+        });
+      }
+    })();
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

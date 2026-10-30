@@ -1,9 +1,8 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../l10n/l10n.dart';
+import '../platform/io.dart' show Platform;
 import '../state/fit_state.dart';
 import '../widgets/ui_kit.dart';
 

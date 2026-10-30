@@ -8,6 +8,7 @@ import '../l10n/l10n.dart';
 import '../models/exercise.dart';
 import '../models/progression.dart';
 import '../models/workout.dart';
+import '../platform/picked.dart';
 import '../services/exercise_match.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -17,9 +18,9 @@ import '../widgets/dialogs.dart';
 import '../widgets/entrance.dart';
 import '../widgets/exercise_media.dart';
 import '../widgets/exercise_preview.dart';
-import '../widgets/ruler_picker.dart';
 import '../widgets/glass.dart';
 import '../widgets/liquid_notch.dart';
+import '../widgets/ruler_picker.dart';
 import '../widgets/stopwatch_card.dart';
 import '../widgets/svg_icon.dart';
 import '../widgets/timer_panel.dart';
@@ -41,7 +42,8 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
   Future<void> _pickMedia() async {
     try {
       final res = await FilePicker.platform.pickFiles(type: FileType.media);
-      final path = res?.files.single.path;
+      final picked = res?.files.single;
+      final path = picked == null ? null : await pickedFilePath(picked);
       if (path != null) await fit.attachExerciseMedia(_exId, path);
     } catch (_) {}
   }

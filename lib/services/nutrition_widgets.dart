@@ -1,14 +1,14 @@
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:home_widget/home_widget.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../l10n/l10n.dart';
+import '../platform/io.dart';
+import '../platform/paths.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
 import '../widgets/home_widget_views.dart';
